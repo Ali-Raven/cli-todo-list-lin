@@ -6,7 +6,6 @@ const os = require('os')
 let homeDir = path.join(os.homedir() , '.todo-cli-lin')
 let JSON_file = path.join(homeDir , 'task.json');
 
-
 // ensuring the function has been made
 
 let ensureTaskDir = () => {
@@ -45,7 +44,15 @@ let loadTasks = () => {
 // saving tasks 
 
 let saveTasks = (inputTasks) => {
-    fs.writeFileSync(JSON_file , JSON.stringify(inputTasks , null) , 'utf-8');
+    if (JSON_file.length < 500) {
+        console.log(`count of all tasks is ${JSON_file.length}`);
+        fs.writeFileSync(JSON_file , JSON.stringify(inputTasks , null) , 'utf-8');
+    }
+    else {
+        fs.writeFile(JSON_file , '' , (err) => err ? console.log(err) : console.log('file reset , your file is new'))
+        console.log(`file ${JSON_file} has been reset.`);
+        fs.writeFileSync(JSON_file , JSON_file.stringify(inputTasks , null) , 'utf-8');
+    }
 }
 
 // async func that add some tasks
@@ -90,6 +97,7 @@ const showTodayTasks = async () => {
 let showAllTasks = async () => {
     if(fs.existsSync(JSON_file)) {
         let resultData = fs.readFileSync(JSON_file , 'utf-8');
+        console.log(`you have ${JSON_file.length} tasks until now !`);
         console.log(resultData);
     }
 }
@@ -119,8 +127,6 @@ async function mainFunction() {
     else 
         console.log('exit ...');
 }
-
-
 
 /// run the program 
 if(process.argv[2] === '--show-today') {
